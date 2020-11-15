@@ -2,7 +2,7 @@
 
 Tool to decypt, edit and re-encrypt BIRT Connection Profile Files (DataSource).
 
-![howto](birt_deconp_editor\assets\howto.gif)
+![howto](birt_deconp_editor/assets/howto.gif)
 
 This is a **proof of concept**, no final product!  
 
