@@ -20,13 +20,24 @@ namespace birt_deconp_editor
         /*
          * symmetischer 24 Byte DESede Schlüssel von "org.eclipse.datatools" verwendet in BIRT bzw. Eclipse
          */
-        public static byte[] passphrase = new byte[] { 0xEA, 0xF1, 0x57, 0xFB, 0xFD, 0xF2, 0x6E, 0x0E, 0x3B, 0x9D, 0xC8, 0x7F, 0x16, 0x0B, 0x91, 0x25, 0xEA, 0xF1, 0x57, 0xFB, 0xFD, 0xF2, 0x6E, 0x0E };
+        private static readonly byte[] passphrase = new byte[] { 0xEA, 0xF1, 0x57, 0xFB, 0xFD, 0xF2, 0x6E, 0x0E, 0x3B, 0x9D, 0xC8, 0x7F, 0x16, 0x0B, 0x91, 0x25, 0xEA, 0xF1, 0x57, 0xFB, 0xFD, 0xF2, 0x6E, 0x0E };
         #region alternativ
         // byte[] passphrase = StringToByteArray("EAF157FBFDF26E0E3B9DC87F160B9125EAF157FBFDF26E0E");
         #endregion
 
+        private TripleDES TDESAlgorithm = TripleDES.Create();
+
+        public Program()
+        {
+            // Setup TDES Algorithm
+            TDESAlgorithm.Key = shortenKey(passphrase);
+            TDESAlgorithm.Mode = CipherMode.ECB; // CipherMode.CBC is C# default;
+            TDESAlgorithm.Padding = PaddingMode.PKCS7;
+        }
+
         public static void Main(string[] args)
         {
+            var program = new Program();
             if (!args.Any())
             {
                 MessageBoxUi($@"Information
@@ -44,7 +55,7 @@ Drag and Drop a File onto '{System.AppDomain.CurrentDomain.FriendlyName}.exe' od
                 // read file
                 byte[] inEncrByte = System.IO.File.ReadAllBytes(srcFilePath);
                 // decrypt
-                byte[] outDecrString = DecryptByte(inEncrByte, passphrase);
+                byte[] outDecrString = program.DecryptByte(inEncrByte);
                 // write temp file
                 System.IO.File.WriteAllBytes(tmpFolderFilePath, outDecrString);
                 // start editor with temp file
@@ -53,7 +64,7 @@ Drag and Drop a File onto '{System.AppDomain.CurrentDomain.FriendlyName}.exe' od
                 // read temp file
                 byte[] tempFileContent = System.IO.File.ReadAllBytes(tmpFolderFilePath);
                 // encrypt
-                byte[] outEncString = EncryptByte(tempFileContent, passphrase);
+                byte[] outEncString = program.EncryptByte(tempFileContent);
                 // write file
                 System.IO.File.WriteAllBytes(srcFilePath, outEncString);
             }
@@ -61,46 +72,23 @@ Drag and Drop a File onto '{System.AppDomain.CurrentDomain.FriendlyName}.exe' od
             {
                 // delete temp file
                 System.IO.File.Delete(tmpFolderFilePath);
+                program.TDESAlgorithm.Clear();
             }
         }
 
-        public static byte[] DecryptByte(byte[] DataToDecrypt, byte[] TDESKey)
+        public byte[] DecryptByte(byte[] DataToDecrypt)
         {
-            TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider()
+            using (ICryptoTransform Decryptor = TDESAlgorithm.CreateDecryptor())
             {
-                Key = shortenKey(TDESKey),
-                Mode = CipherMode.ECB, // CipherMode.CBC is C# default
-                Padding = PaddingMode.PKCS7,
-            };
-
-            try
-            {
-                ICryptoTransform Decryptor = TDESAlgorithm.CreateDecryptor();
                 return Decryptor.TransformFinalBlock(DataToDecrypt, 0, DataToDecrypt.Length);
             }
-            finally
-            {
-                TDESAlgorithm.Clear();
-            }
         }
 
-        public static byte[] EncryptByte(byte[] DataToEncrypt, byte[] TDESKey)
+        public byte[] EncryptByte(byte[] DataToEncrypt)
         {
-            TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider()
+            using (ICryptoTransform Encryptor = TDESAlgorithm.CreateEncryptor())
             {
-                Key = shortenKey(TDESKey),
-                Mode = CipherMode.ECB, // CipherMode.CBC is C# default
-                Padding = PaddingMode.PKCS7,
-            };
-
-            try
-            {
-                ICryptoTransform Encryptor = TDESAlgorithm.CreateEncryptor();
                 return Encryptor.TransformFinalBlock(DataToEncrypt, 0, DataToEncrypt.Length);
-            }
-            finally
-            {
-                TDESAlgorithm.Clear();
             }
         }
 
@@ -122,7 +110,7 @@ Drag and Drop a File onto '{System.AppDomain.CurrentDomain.FriendlyName}.exe' od
                              .ToArray();
         }
 
-        public static void MessageBoxUi(string message)
+        private static void MessageBoxUi(string message)
         {
             MessageBox((IntPtr)0, message, System.AppDomain.CurrentDomain.FriendlyName, 0);
         }

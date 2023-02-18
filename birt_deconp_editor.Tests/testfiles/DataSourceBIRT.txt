@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<DataTools.ServerProfiles version="1.0">
+	<profile autoconnect="No" desc="Data Source for the form" id="3f41ee61-de68-11d7-a569-b40d8d43bbf0" name="ProfileName" providerID="org.eclipse.birt.report.data.oda.jdbc">
+		<baseproperties>
+			<property name="odaUser" value="User"/>
+			<property name="metadataBidiFormatStr" value="ILYNN"/>
+			<property name="odaDriverClass" value="org.mariadb.jdbc.Driver"/>
+			<property name="odaJndiName" value=""/>
+			<property name="odaPassword" value="12345678"/>
+			<property name="disabledMetadataBidiFormatStr" value=""/>
+			<property name="contentBidiFormatStr" value="ILYNN"/>
+			<property name="odaURL" value="jdbc:mariadb://localhost:3306/DatabaseName"/>
+			<property name="disabledContentBidiFormatStr" value=""/>
+		</baseproperties>
+		<org.eclipse.datatools.connectivity.versionInfo/>
+	</profile>
+</DataTools.ServerProfiles>
