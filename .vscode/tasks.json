@@ -48,6 +48,12 @@
       "type": "process",
       "args": ["test"],
       "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build, test, publish",
+      "dependsOn": ["build", "test", "publish"],
+      "dependsOrder": "sequence",
+      "problemMatcher": "$msCompile"
     }
   ]
 }
