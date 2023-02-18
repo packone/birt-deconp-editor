@@ -25,7 +25,9 @@
         "/property:configuration=Release",
         "/property:PublishSingleFile=true",
         "/property:PublishTrimmed=true",
-        "/property:Runtimeidentifier=win-x64"
+        "/property:Runtimeidentifier=win-x64",
+        "/property:DebugType=None",
+        "/property:DebugSymbols=false"
       ],
       "problemMatcher": "$msCompile"
     },
