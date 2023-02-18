@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace birt_deconp_editor
 {
-    class Program
+    public class Program
     {
         /*
          * Enable Popup output for Console Application
@@ -20,12 +20,12 @@ namespace birt_deconp_editor
         /*
          * symmetischer 24 Byte DESede Schlüssel von "org.eclipse.datatools" verwendet in BIRT bzw. Eclipse
          */
-        static byte[] passphrase = new byte[] { 0xEA, 0xF1, 0x57, 0xFB, 0xFD, 0xF2, 0x6E, 0x0E, 0x3B, 0x9D, 0xC8, 0x7F, 0x16, 0x0B, 0x91, 0x25, 0xEA, 0xF1, 0x57, 0xFB, 0xFD, 0xF2, 0x6E, 0x0E };
+        public static byte[] passphrase = new byte[] { 0xEA, 0xF1, 0x57, 0xFB, 0xFD, 0xF2, 0x6E, 0x0E, 0x3B, 0x9D, 0xC8, 0x7F, 0x16, 0x0B, 0x91, 0x25, 0xEA, 0xF1, 0x57, 0xFB, 0xFD, 0xF2, 0x6E, 0x0E };
         #region alternativ
         // byte[] passphrase = StringToByteArray("EAF157FBFDF26E0E3B9DC87F160B9125EAF157FBFDF26E0E");
         #endregion
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             if (!args.Any())
             {
@@ -48,7 +48,7 @@ Drag and Drop a File onto '{System.AppDomain.CurrentDomain.FriendlyName}.exe' od
                 // write temp file
                 System.IO.File.WriteAllBytes(tmpFolderFilePath, outDecrString);
                 // start editor with temp file
-                Process process = Process.Start("notepad.exe",tmpFolderFilePath);
+                Process process = Process.Start("notepad.exe", tmpFolderFilePath);
                 process.WaitForExit();
                 // read temp file
                 byte[] tempFileContent = System.IO.File.ReadAllBytes(tmpFolderFilePath);
