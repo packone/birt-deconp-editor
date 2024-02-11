@@ -9,7 +9,7 @@ public class UnitTestProgram
     {
         const string sourceFileEncrypted = "./testfiles/DataSourceBIRT";
 
-        byte[] inEncrByte = System.IO.File.ReadAllBytes(sourceFileEncrypted);
+        byte[] inEncrByte = File.ReadAllBytes(sourceFileEncrypted);
         byte[] outDecrString = program.DecryptByte(inEncrByte);
         string outString = System.Text.Encoding.Default.GetString(outDecrString);
 
@@ -20,10 +20,10 @@ public class UnitTestProgram
     public void TestEncrypt()
     {
         const string sourceFileEncrypted = "./testfiles/BasicXMLDataSource";
-        byte[] resultFile = System.IO.File.ReadAllBytes(sourceFileEncrypted);
+        byte[] resultFile = File.ReadAllBytes(sourceFileEncrypted);
 
         const string sourceFileDecrypted = "./testfiles/BasicXML.txt";
-        byte[] tempFileContent = System.IO.File.ReadAllBytes(sourceFileDecrypted);
+        byte[] tempFileContent = File.ReadAllBytes(sourceFileDecrypted);
         byte[] outEncString = program.EncryptByte(tempFileContent);
 
         Assert.Equal(resultFile, outEncString);
@@ -33,10 +33,10 @@ public class UnitTestProgram
     public void TestEncrypt2()
     {
         const string sourceFileEncrypted = "./testfiles/BasicXMLDataSource";
-        byte[] resultFile = System.IO.File.ReadAllBytes(sourceFileEncrypted);
+        byte[] resultFile = File.ReadAllBytes(sourceFileEncrypted);
 
         const string sourceFileDecrypted = "./testfiles/BasicXML.txt";
-        byte[] tempFileContent = System.IO.File.ReadAllBytes(sourceFileDecrypted);
+        byte[] tempFileContent = File.ReadAllBytes(sourceFileDecrypted);
         byte[] outEncString = program.EncryptByte(tempFileContent);
 
         Assert.Equal(resultFile, outEncString);

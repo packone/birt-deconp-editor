@@ -10,8 +10,8 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/birt_deconp_editor/bin/Debug/netcoreapp3.1/birt_deconp_editor.dll",
-            "args": ["${workspaceFolder}\\cpe_rw\\exampleFiles\\DataSourceBIRT"],
+            "program": "${workspaceFolder}/birt_deconp_editor/bin/Debug/net8.0/birt_deconp_editor.exe",
+            "args": ["${workspaceFolder}\\birt_deconp_editor\\exampleFiles\\DataSourceBIRT"],
             "cwd": "${workspaceFolder}/birt_deconp_editor",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "integratedTerminal",

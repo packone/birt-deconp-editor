@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
-using System.Text;
-using System.Xml;
 
 namespace birt_deconp_editor
 {
@@ -20,17 +18,25 @@ namespace birt_deconp_editor
         /*
          * symmetischer 24 Byte DESede Schlüssel von "org.eclipse.datatools" verwendet in BIRT bzw. Eclipse
          */
-        private static readonly byte[] passphrase = new byte[] { 0xEA, 0xF1, 0x57, 0xFB, 0xFD, 0xF2, 0x6E, 0x0E, 0x3B, 0x9D, 0xC8, 0x7F, 0x16, 0x0B, 0x91, 0x25, 0xEA, 0xF1, 0x57, 0xFB, 0xFD, 0xF2, 0x6E, 0x0E };
+        private static readonly byte[] passphrase = [0xEA, 0xF1, 0x57, 0xFB, 0xFD, 0xF2, 0x6E, 0x0E, 0x3B, 0x9D, 0xC8, 0x7F, 0x16, 0x0B, 0x91, 0x25, 0xEA, 0xF1, 0x57, 0xFB, 0xFD, 0xF2, 0x6E, 0x0E];
         #region alternativ
         // byte[] passphrase = StringToByteArray("EAF157FBFDF26E0E3B9DC87F160B9125EAF157FBFDF26E0E");
         #endregion
 
-        private TripleDES TDESAlgorithm = TripleDES.Create();
+        private static readonly string appName = AppDomain.CurrentDomain.FriendlyName;
+        private readonly TripleDES TDESAlgorithm = TripleDES.Create();
 
         public Program()
         {
-            // Setup TDES Algorithm
-            TDESAlgorithm.Key = shortenKey(passphrase);
+            SetupTDESAlg();
+        }
+
+        /// <summary>
+        /// Setup TDES Algorithm
+        /// </summary>
+        private void SetupTDESAlg()
+        {
+            TDESAlgorithm.Key = ShortenKey(passphrase);
             TDESAlgorithm.Mode = CipherMode.ECB; // CipherMode.CBC is C# default;
             TDESAlgorithm.Padding = PaddingMode.PKCS7;
         }
@@ -38,11 +44,11 @@ namespace birt_deconp_editor
         public static void Main(string[] args)
         {
             var program = new Program();
-            if (!args.Any())
+            if (args.Length == 0)
             {
                 MessageBoxUi($@"Information
 This Application edits BIRT Connection Profile Files (DataSource).
-Drag and Drop a File onto '{System.AppDomain.CurrentDomain.FriendlyName}.exe' oder supply an absolute Path to the File as the first Parameter.");
+Drag and Drop a File onto '{appName}.exe' oder supply an absolute Path to the File as the first Parameter.");
                 return;
             }
 
@@ -53,25 +59,25 @@ Drag and Drop a File onto '{System.AppDomain.CurrentDomain.FriendlyName}.exe' od
             try
             {
                 // read file
-                byte[] inEncrByte = System.IO.File.ReadAllBytes(srcFilePath);
+                byte[] inEncrByte = File.ReadAllBytes(srcFilePath);
                 // decrypt
                 byte[] outDecrString = program.DecryptByte(inEncrByte);
                 // write temp file
-                System.IO.File.WriteAllBytes(tmpFolderFilePath, outDecrString);
+                File.WriteAllBytes(tmpFolderFilePath, outDecrString);
                 // start editor with temp file
                 Process process = Process.Start("notepad.exe", tmpFolderFilePath);
                 process.WaitForExit();
                 // read temp file
-                byte[] tempFileContent = System.IO.File.ReadAllBytes(tmpFolderFilePath);
+                byte[] tempFileContent = File.ReadAllBytes(tmpFolderFilePath);
                 // encrypt
                 byte[] outEncString = program.EncryptByte(tempFileContent);
                 // write file
-                System.IO.File.WriteAllBytes(srcFilePath, outEncString);
+                File.WriteAllBytes(srcFilePath, outEncString);
             }
             finally
             {
                 // delete temp file
-                System.IO.File.Delete(tmpFolderFilePath);
+                File.Delete(tmpFolderFilePath);
                 program.TDESAlgorithm.Clear();
             }
         }
@@ -92,13 +98,13 @@ Drag and Drop a File onto '{System.AppDomain.CurrentDomain.FriendlyName}.exe' od
             }
         }
 
-        private static byte[] shortenKey(byte[] TDESKey)
+        private static byte[] ShortenKey(byte[] TDESKey)
         {
             if (TDESKey.Length <= 24)
                 return TDESKey;
 
             Console.WriteLine("Warning: The Key is larger than 24 Byte/192 Bit and got shortend!");
-            System.Array.Resize(ref TDESKey, 192 / 8);
+            Array.Resize(ref TDESKey, 192 / 8);
             return TDESKey;
         }
 
@@ -112,7 +118,9 @@ Drag and Drop a File onto '{System.AppDomain.CurrentDomain.FriendlyName}.exe' od
 
         private static void MessageBoxUi(string message)
         {
-            MessageBox((IntPtr)0, message, System.AppDomain.CurrentDomain.FriendlyName, 0);
+            int result = MessageBox(0, message, appName, 0);
+            if (result != 1)
+                throw new Exception("Message Box failed");
         }
     }
 }
